@@ -1,5 +1,6 @@
-import streamlit
+import streamlit as str
 
-streamlit.title('My parents new healthy dinner')
-'Breakfast menu'
-'Omega 3 and oatmeal'
+str.title('My parents new healthy dinner')
+str.header('Breakfast menu')
+str.text('Omega 3 and oatmeal')
+'Avocado toast'
