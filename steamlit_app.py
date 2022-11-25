@@ -30,7 +30,7 @@ fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_c
 
 #streamlit.text(fruityvice_response.json()) 
 
-#from nested semi structured jsot to a flat table
+#from nested semi structured json to a flat table
 fruityvice_normalized = pandas.json_normalize(fruityvice_response.json())
 
 #to screen
@@ -48,3 +48,7 @@ my_data_row = my_cur.fetchall()
 streamlit.header("The fruit load list contains:")
 #streamlit.text(my_data_row)
 streamlit.dataframe(my_data_row)
+
+#allow the end user to add a fruit to the list
+add_fruit = streamlit.text_input('What fruit would you like to add?','jackfruit')
+streamlit.text("Thanks for adding" + add_fruit)
