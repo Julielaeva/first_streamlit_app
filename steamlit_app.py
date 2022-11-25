@@ -33,15 +33,13 @@ streamlit.dataframe(fruits_to_show)
 
 #From the fruitvise website
 
-#creating function
+#creating function to get data from fruitvise website
 def get_fruitvise_data(this_fruit_choice):
  fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + this_fruit_choice)
  fruityvice_normalized = pandas.json_normalize(fruityvice_response.json()) #from nested semi structured json to a flat table
  return fruityvice_normalized
   
  
-
-
 streamlit.header("Fruityvice Fruit Advice!")
 try:
  fruit_choice = streamlit.text_input('What fruit would you like information about?')
@@ -67,20 +65,28 @@ except URLError as e:
 
 
 
-streamlit.stop()
+#streamlit.stop()
 
 #import snowflake.connector
-my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
-my_cur = my_cnx.cursor()
-#my_cur.execute("SELECT CURRENT_USER(), CURRENT_ACCOUNT(), CURRENT_REGION()")
-my_cur.execute("select * from FRUIT_LOAD_LIST")
 #my_data_row = my_cur.fetchone()
-my_data_row = my_cur.fetchall()
-#streamlit.text("Hello from Snowflake:")
-#streamlit.text("The fruit load list contains:")
+#my_cur.execute("SELECT CURRENT_USER(), CURRENT_ACCOUNT(), CURRENT_REGION()")
+
+
+
+
 streamlit.header("The fruit load list contains:")
-#streamlit.text(my_data_row)
-streamlit.dataframe(my_data_row)
+#snowflake related function
+def get_friut_load_list():
+ with my_cnx.cursor() as my_cur:
+  my_cur.execute("select * from FRUIT_LOAD_LIST")
+  return my_cur.fetchall()
+ 
+#Add a button to load the fruit
+if streamlit.button('Get fruit load list'):
+ my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
+ my_data_rows = get_friut_load_list()
+ streamlit.dataframe(my_data_row)
+
 
 #allow the end user to add a fruit to the list
 add_fruit = streamlit.text_input('What fruit would you like to add?','jackfruit')
