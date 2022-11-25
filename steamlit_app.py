@@ -3,8 +3,7 @@ import pandas
 import snowflake.connector
 import requests
 from urllib.error import URLError
-my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
-my_cur = my_cnx.cursor()
+
 
 
 
@@ -26,7 +25,7 @@ my_fruit_list = my_fruit_list.set_index('Fruit')
 # Let's put a pick list here so they can pick the fruit they want to include 
 friuts_selected = streamlit.multiselect("Pick some fruits:", list(my_fruit_list.index))
 fruits_to_show = my_fruit_list.loc[friuts_selected]
-#my_cur.execute("insert into FRUIT_LOAD_LIST values ('from streamlit')")
+
 
 # Display the table on the page.
 streamlit.dataframe(fruits_to_show)
@@ -67,7 +66,6 @@ except URLError as e:
 
 #streamlit.stop()
 
-#import snowflake.connector
 #my_data_row = my_cur.fetchone()
 #my_cur.execute("SELECT CURRENT_USER(), CURRENT_ACCOUNT(), CURRENT_REGION()")
 
@@ -87,9 +85,21 @@ if streamlit.button('Get fruit load list'):
  my_data_rows = get_friut_load_list()
  streamlit.dataframe(my_data_rows)
 
-streamlit.stop()
-#allow the end user to add a fruit to the list
-add_fruit = streamlit.text_input('What fruit would you like to add?','jackfruit')
-streamlit.text('Thanks for adding' + ' ' + add_fruit)
+#streamlit.stop()
 
-my_cur.execute("insert into FRUIT_LOAD_LIST values ('from streamlit')")
+
+
+#allowing the end user to add a fruit to the list
+def insert_rows_snowflake(new_fruit):
+ with my_cnx.cursor() as my_cur:
+  my_cur.execute("insert into FRUIT_LOAD_LIST values ('from streamlit')")
+  return 'Thanks for adding' + new_fruit
+
+add_fruit = streamlit.text_input('What fruit would you like to add?')
+if streamlit.button('Add a fruit to the list'):
+ my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
+ back_from_function = insert_rows_snowflake(add_fruit)
+ streamlit.text(back_from_function)
+ 
+
+
