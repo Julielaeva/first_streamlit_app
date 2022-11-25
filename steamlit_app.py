@@ -32,15 +32,28 @@ fruits_to_show = my_fruit_list.loc[friuts_selected]
 streamlit.dataframe(fruits_to_show)
 
 #From the fruitvise website
+
+#creating function
+def get_fruitvise_data(this_fruit choice):
+ fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
+ fruityvice_normalized = pandas.json_normalize(fruityvice_response.json()) #from nested semi structured json to a flat table
+ return fruityvice_normalized
+  
+ 
+
+
 streamlit.header("Fruityvice Fruit Advice!")
 try:
  fruit_choice = streamlit.text_input('What fruit would you like information about?','Kiwi')
  if not fruit_choice:
   streamlit.error('Please select a fruit to get information')
  else:
-  fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
-  fruityvice_normalized = pandas.json_normalize(fruityvice_response.json()) #from nested semi structured json to a flat table
-  streamlit.dataframe(fruityvice_normalized) #to screen
+  back_from_function = get_fruitvise_data(fruit_choice)
+  #fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
+  #fruityvice_normalized = pandas.json_normalize(fruityvice_response.json()) #from nested semi structured json to a flat table
+  #streamlit.dataframe(fruityvice_normalized) #to screen
+  streamlit.dataframe(back_from_function) #to screen
+  
   
 except URLError as e:
  streamlit.error()
